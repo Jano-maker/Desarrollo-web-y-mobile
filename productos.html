@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Productos</title>
+    <script>
+        function saludar(){
+            console.log("Hola");
+        }
+        function cambioTexto(e){
+            if (e.key === "Enter"){
+                console.log("Hola "+ document.getElementById("texto").value);
+            }
+        }
+        function validar(){
+            let valor = document.getElementById("texto2").value;
+            if (valor === ""){
+                console.log("Texto vacio");
+                document.getElementById("valTexto2").style.display = "";
+                } else {
+                document.getElementById("valTexto2").style.display = "none";
+            }
+        }
+        let x, y, z;
+        x= 5;
+        y= 6;
+        z = x+y;
+        z = x%y;
+        z *= 2;
+        z += 2;
+        z = x**y;
+        console.log(z);
+        //Estructuras de control python and: javascript && - python or : javascript || 
+            if (z < 10 && y === 2){ // 
+                console.log("z unitario");
+            } else if ( z < 20){
+                console.log("z decimal");
+            } else {
+                console.log("otro caso");
+            }
+        try {
+            console.log("Conmtrol");
+            throw "Muy Lento";
+        } catch(err){
+            console.log(err);
+        }
+        let text;
+        if (Math.random() < 0.5){
+            console.log("cara");
+        } else {
+            console.log("Sello");
+        }
+        console.log(typeof(z));
+        class Persona{}
+        const p = new Persona();
+        if (p instanceof Persona){
+            console.log("Es persona");
+        }
+        // iteraciones
+        for (let i=0; i <3; i++){
+            console.log(i)
+        }
+        let j = 0;
+        while(j < 3){
+            console.log(j);
+            j++;
+        }
+        let k = 0;
+        do{
+            console.log(k);
+            k++
+        } while(k>3);
+        const marcas = ["BMW", "Volvo", "Ford"];
+        let l=0;
+        let todasMarcas ="";
+        for(;marcas[l];){
+            todasMarcas += " " + marcas[l];
+            l++;
+        }
+        console.log(todasMarcas);
+        let m=0;
+        let tMarcas = "";
+        while(marcas[m]){
+            tMarcas +=  " " + marcas[m];
+            m++;
+        }
+        console.log(tMarcas);
+    </script>
+</head>
+<body>
+    <p id="msg"></p>
+    <select name="comuna" id="com"></select>
+    <script>
+        console.log("Empezó código");
+        document.getElementById("msg").innerText = "Holaaa";
+        document.getElementById("com").innerHTML = '<option value="1">Santiago<\option><option value ="2">Antofagasta<\option>';
+    </script>
+    <button type="button" onclick="alert('clic');">Evento</button>
+    <button type="button" onclick="console.log('clic');">Evento2</button>
+    <button type="button" onclick="window.print();">Imprimir</button>
+    <button type="button" onclick="saludar();">Saludo</button>
+    <input type="text" id="texto" onkeyDown="cambioTexto(event);" />
+    <input type="text" id="texto2" onblur="validar();" /><span id="valTexto2" style="display: none; color: red;">Debe ingresar texto</span>
+</body>
+</html>
