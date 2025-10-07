@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Mariachi - Beta</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f5f5f5; color: #333; }
+        
+        /* Header */
+        header { background: #d35400; color: white; padding: 15px; position: sticky; top: 0; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        nav ul { display: flex; list-style: none; }
+        nav li { margin: 0 10px; }
+        nav a { color: white; text-decoration: none; }
+        
+        /* Hero */
+        .hero { background: #e67e22; color: white; text-align: center; padding: 60px 20px; }
+        
+        /* Secciones */
+        .section { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; margin-bottom: 30px; color: #d35400; }
+        
+        /* Menú */
+        .category-tabs { display: flex; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .category-tab { padding: 8px 15px; margin: 5px; background: #ecf0f1; border: none; cursor: pointer; }
+        .category-tab.active { background: #d35400; color: white; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .product-card { background: white; padding: 15px; border-radius: 5px; text-align: center; }
+        
+        /* Formularios */
+        .form-group { margin-bottom: 15px; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ddd; }
+        .btn { background: #d35400; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+        
+        /* Footer */
+        footer { background: #2c3e50; color: white; text-align: center; padding: 20px; }
+        
+        /* Modales */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 5px; width: 90%; max-width: 500px; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; }
+            nav ul { margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+            .products-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">El Mariachi</div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#menu">Menú</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="#" id="reservasBtn">Reservas</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <span id="cartIcon">🛒 <span id="cartCount">0</span></span>
+                <button id="loginBtn">Iniciar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="inicio">
+        <h1>Bienvenidos a El Mariachi</h1>
+        <p>Auténtica comida mexicana</p>
+        <button class="btn" id="verMenuBtn">Ver Menú</button>
+    </section>
+
+    <!-- Menú -->
+    <section class="section" id="menu">
+        <h2 class="section-title">Nuestro Menú</h2>
+        
+        <div class="category-tabs">
+            <button class="category-tab active" data-category="all">Todos</button>
+            <button class="category-tab" data-category="tacos">Tacos</button>
+            <button class="category-tab" data-category="nachos">Nachos</button>
+            <button class="category-tab" data-category="burritos">Burritos</button>
+            <button class="category-tab" data-category="bebidas">Bebidas</button>
+        </div>
+        
+        <input type="text" id="searchInput" placeholder="Buscar..." style="width: 100%; margin-bottom: 20px; padding: 8px;">
+        
+        <div class="products-grid" id="productsGrid">
+            <!-- Productos cargados por JS -->
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="section" id="contacto" style="background: #f9f9f9;">
+        <h2 class="section-title">Contacto</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <h3>Información</h3>
+                <p><strong>Dirección:</strong> Av. Principal #123</p>
+                <p><strong>Teléfono:</strong> (555) 123-4567</p>
+                <p><strong>Horario:</strong> Lunes a Domingo: 12:00 - 23:00</p>
+            </div>
+            
+            <div>
+                <h3>Envíanos un mensaje</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Mensaje" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 El Mariachi - Versión Beta</p>
+    </footer>
+
+    <!-- Modal Carrito -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <h2>Tu Carrito</h2>
+            <div id="cartItems"></div>
+            <p>Total: $<span id="cartTotal">0</span></p>
+            <button class="btn" id="checkoutBtn">Pagar</button>
+            <button class="btn" style="background: #95a5a6;" id="closeCart">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Login -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+            <p><a href="#" id="showRegister">Crear cuenta</a></p>
+            <button class="btn" style="background: #95a5a6;" id="closeLogin">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Registro -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h2>Crear Cuenta</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Nombre" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn">Registrarse</button>
+            </form>
+            <p><a href="#" id="showLogin">Ya tengo cuenta</a></p>
+            <button class="btn" style="background: #95a5a6;" id="closeRegister">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Reservas -->
+    <div class="modal" id="reservationModal">
+        <div class="modal-content">
+            <h2>Reservar Mesa</h2>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <input type="date" required>
+                </div>
+                <div class="form-group">
+                    <input type="time" required>
+                </div>
+                <div class="form-group">
+                    <select required>
+                        <option value="">Personas</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Reservar</button>
+            </form>
+            <button class="btn" style="background: #95a5a6;" id="closeReservation">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // Datos básicos
+        const products = [
+            { id: 1, name: "Tacos al Pastor", price: 12, category: "tacos", emoji: "🌮" },
+            { id: 2, name: "Tacos de Carnitas", price: 10, category: "tacos", emoji: "🌮" },
+            { id: 3, name: "Nachos Clásicos", price: 15, category: "nachos", emoji: "🧀" },
+            { id: 4, name: "Burrito de Carne", price: 14, category: "burritos", emoji: "🌯" },
+            { id: 5, name: "Refresco", price: 8, category: "bebidas", emoji: "🥤" }
+        ];
+
+        let cart = [];
+        let currentCategory = 'all';
+
+        // Elementos DOM
+        const productsGrid = document.getElementById('productsGrid');
+        const cartCount = document.getElementById('cartCount');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            setupEventListeners();
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Categorías
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.getAttribute('data-category');
+                    renderProducts();
+                });
+            });
+
+            // Búsqueda
+            document.getElementById('searchInput').addEventListener('input', function() {
+                renderProducts();
+            });
+
+            // Carrito
+            document.getElementById('cartIcon').addEventListener('click', openCart);
+            document.getElementById('closeCart').addEventListener('click', closeModals);
+            document.getElementById('checkoutBtn').addEventListener('click', checkout);
+
+            // Login/Registro
+            document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
+            document.getElementById('closeLogin').addEventListener('click', closeModals);
+            document.getElementById('closeRegister').addEventListener('click', closeModals);
+            document.getElementById('showRegister').addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModals();
+                openModal('registerModal');
+            });
+            document.getElementById('showLogin').addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModals();
+                openModal('loginModal');
+            });
+
+            // Reservas
+            document.getElementById('reservasBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal('reservationModal');
+            });
+            document.getElementById('closeReservation').addEventListener('click', closeModals);
+
+            // Formularios
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Login exitoso (simulado)');
+                closeModals();
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Registro exitoso (simulado)');
+                closeModals();
+            });
+
+            document.getElementById('contactForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Mensaje enviado (simulado)');
+            });
+
+            document.getElementById('reservationForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Reserva confirmada (simulado)');
+                closeModals();
+            });
+
+            // Ver menú
+            document.getElementById('verMenuBtn').addEventListener('click', () => {
+                document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // Renderizar productos
+        function renderProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredProducts = products.filter(product => {
+                const matchesCategory = currentCategory === 'all' || product.category === currentCategory;
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+                return matchesCategory && matchesSearch;
+            });
+
+            productsGrid.innerHTML = '';
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div style="font-size: 2rem;">${product.emoji}</div>
+                    <h3>${product.name}</h3>
+                    <p>$${product.price}</p>
+                    <button class="btn" onclick="addToCart(${product.id})">Agregar</button>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+        }
+
+        // Funciones del carrito
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCartUI();
+            alert('Producto agregado al carrito');
+        }
+
+        function updateCartUI() {
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            if (document.getElementById('cartModal').style.display === 'flex') {
+                renderCartItems();
+            }
+        }
+
+        function renderCartItems() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Carrito vacío</p>';
+                cartTotal.textContent = '0';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const itemElement = document.createElement('div');
+                itemElement.innerHTML = `
+                    <p>${item.emoji} ${item.name} - $${item.price} x ${item.quantity} = $${itemTotal}</p>
+                `;
+                cartItems.appendChild(itemElement);
+            });
+            
+            cartTotal.textContent = total;
+        }
+
+        function openCart() {
+            renderCartItems();
+            openModal('cartModal');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Carrito vacío');
+                return;
+            }
+            
+            alert('Pedido realizado con éxito!');
+            cart = [];
+            updateCartUI();
+            closeModals();
+        }
+
+        // Utilidades modales
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModals();
+            }
+        });
+    </script>
+</body>
+</html>
